@@ -1,164 +1,152 @@
 package com.example.jetreader.screens.register
 
-import android.annotation.SuppressLint
-import android.graphics.Paint.Align
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
+import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.jetreader.R
 import com.example.jetreader.components.CustomButton
+import com.example.jetreader.components.InputField
+import com.example.jetreader.components.InputViewModel
 import com.example.jetreader.utils.AppConstants
-import kotlinx.coroutines.delay
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-fun RegisterScreen() {
-    Column(
-        modifier = Modifier
-            .background(color = Color.White)
-            .fillMaxSize()
-    ) {
-        RegisterPager()
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            CustomButton(darkBackground = true, text = "Get Started", shadow = false)
-            Spacer(modifier = Modifier.height(20.dp))
-            CustomButton(darkBackground = false, text = "I already have an Account", shadow = false)
-        }
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun RegisterPager() {
-    val pagerState = rememberPagerState(
-        initialPage = 0
-    )
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(0.8f)
-    ) {
-        HorizontalPager(
-            state = pagerState,
-            pageCount = 4,
-            modifier = Modifier.fillMaxHeight(0.9f),
-            userScrollEnabled = false
-        ) { page ->
-            Column(
+fun RegisterScreen(
+    inputViewModel: InputViewModel = InputViewModel()
+) {
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight()
+                    .padding(10.dp)
+            ) {
+                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+            }
+        }
+    ) {
+        Box(modifier = Modifier.padding(it)) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(0.65f)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.book1),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .fillMaxHeight(),
-                        contentScale = ContentScale.FillBounds
+                    modifier = Modifier.scrollable(
+                        rememberScrollState(),
+                        orientation = Orientation.Vertical
                     )
+                ) {
+                    Column(modifier = Modifier.padding(10.dp)) {
+                        Text(
+                            text = "Create an Account \uD83D\uDD0F",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 30.sp
+                        )
+                        Spacer(modifier = Modifier.height(20.dp))
+                        InputField(
+                            label = "Username", type = KeyboardType.Text,
+                            value = inputViewModel.username,
+                            onValueChange = { inputViewModel.updateUsername(it) },
+                            placeHolderText = "Enter your username",
+                            isError = inputViewModel.usernameError,
+                            errorText = "Username should be at least 6 chars long")
+                        InputField(
+                            label = "Email", type = KeyboardType.Email,
+                            value = inputViewModel.email,
+                            onValueChange = { inputViewModel.updateEmail(it) },
+                            placeHolderText = "Enter your Email ID",
+                            isError = inputViewModel.emailError,
+                            errorText = "Enter a valid email ID")
+                        InputField(
+                            label = "Password", type = KeyboardType.Password,
+                            value = inputViewModel.password,
+                            onValueChange = { inputViewModel.updatePassword(it) },
+                            placeHolderText = "Enter your password",
+                            isError = inputViewModel.passwordError,
+                            trailingIcon = {
+                                IconButton(
+                                    onClick = { inputViewModel.togglePasswordVisible() }
+                                ) {
+                                    Icon(
+                                        imageVector = if (inputViewModel.passwordVisible)
+                                            Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
+                                        contentDescription = null,
+                                        tint = AppConstants.DarkYellow
+                                    )
+                                }
+                            },
+                            visualTransformation = if (inputViewModel.passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                            errorText = "Password must be at least 6 chars long"
+                        )
+                        InputField(
+                            label = "Confirm Password", type = KeyboardType.Password,
+                            value = inputViewModel.confirmPassword,
+                            onValueChange = { inputViewModel.updateConfirmPassword(it) },
+                            imeAction = ImeAction.Done,
+                            placeHolderText = "Confirm your password",
+                            isError = inputViewModel.confirmPasswordError,
+                            trailingIcon = {
+                                IconButton(
+                                    onClick = { inputViewModel.togglePasswordVisible() }
+                                ) {
+                                    Icon(
+                                        imageVector = if (inputViewModel.passwordVisible)
+                                            Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
+                                        contentDescription = null,
+                                        tint = AppConstants.DarkYellow
+                                    )
+                                }
+                            },
+                            visualTransformation = if (inputViewModel.passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                            errorText = "Password doesn't match"
+                        )
+                    }
                 }
-                Text(
-                    text = buildAnnotatedString {
-                        withStyle(
-                            style = SpanStyle(
-                                color = Color.Black,
-                            )
-                        ) {
-                            append("Welcome to")
-                        }
-                        withStyle(
-                            style = SpanStyle(
-                                color = AppConstants.DarkYellow
-                            )
-                        ) {
-                            append(" JetReader \uD83D\uDC4B")
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 27.sp,
-                    textAlign = TextAlign.Center
-                )
-                Text(
-                    text = "Soar into a World of Words, " + "where each page carries you to new heights of imagination and " + "discovery.",
-                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 20.dp),
-                    textAlign = TextAlign.Center,
-                    lineHeight = 25.sp,
-                    fontSize = 17.sp
-                )
-            }
-        }
-        LaunchedEffect(true) {
-            while(true) {
-                delay(3000)
-                pagerState.animateScrollToPage((pagerState.settledPage+1)%4)
-            }
-        }
-        Row(
-            modifier = Modifier.fillMaxSize(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            repeat(4) {
-                val color =
-                    if (pagerState.currentPage == it) AppConstants.DarkYellow else Color.Gray
-                Box(
-                    modifier = Modifier
-                        .padding(5.dp)
-                        .width(15.dp)
-                        .height(5.dp)
-                        .clip(RoundedCornerShape(corner = CornerSize(10.dp)))
-                        .background(color)
-                )
+                Column {
+                    Divider(thickness = 1.dp, color = Color.LightGray)
+                    CustomButton(
+                        modifier = Modifier.padding(vertical = 20.dp),
+                        darkBackground = true,
+                        text = "Sign Up",
+                        shadow = true
+                    ) {
+                        inputViewModel.submitRegForm()
+                    }
+                }
             }
         }
     }

@@ -54,7 +54,7 @@ fun SplashScreen(
                 )
             )
             delay(2000)
-            navController.navigate(ReaderScreens.RegisterScreen.name)
+            navController.navigate(ReaderScreens.OnBoardScreen.name)
         }
 
         Column(

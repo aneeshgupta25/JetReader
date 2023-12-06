@@ -107,4 +107,7 @@ dependencies {
     // Room
     implementation("androidx.room:room-runtime:2.6.1")
     annotationProcessor("androidx.room:room-compiler:2.6.1")
+
+    // Material
+    implementation "androidx.compose.material:material-icons-extended:1.5.4"
 }

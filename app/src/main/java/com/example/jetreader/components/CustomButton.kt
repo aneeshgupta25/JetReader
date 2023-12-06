@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
@@ -26,22 +27,23 @@ import com.example.jetreader.utils.AppConstants
 @Preview
 @Composable
 fun CustomButton(
+    modifier: Modifier = Modifier,
     text: String = "Get Started",
     darkBackground: Boolean = false,
     shadow: Boolean = false,
     onClick: () -> Unit = {}
 ) {
     Button(onClick = onClick,
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
             .height(50.dp)
             .padding(horizontal = 15.dp),
-        contentPadding = PaddingValues(0.dp)
+        contentPadding = PaddingValues(0.dp),
+        elevation = ButtonDefaults.buttonElevation(defaultElevation = if (shadow) 10.dp else 0.dp),
     ) {
         Card(
             modifier = Modifier
                 .fillMaxSize(),
             shape = RoundedCornerShape(corner = CornerSize(20.dp)),
-            elevation = CardDefaults.cardElevation(defaultElevation = if (shadow) 10.dp else 0.dp),
             colors = CardDefaults.cardColors(
                 if (darkBackground) AppConstants.DarkYellow
                 else AppConstants.LightYellow
