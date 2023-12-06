@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.jetreader.screens.login.LoginScreen
 import com.example.jetreader.screens.onboard.OnboardScreen
 import com.example.jetreader.screens.register.RegisterScreen
 import com.example.jetreader.screens.splash.SplashScreen
@@ -21,6 +22,9 @@ fun ReaderNavigation() {
         }
         composable(route = ReaderScreens.RegisterScreen.name) {
             RegisterScreen()
+        }
+        composable(route = ReaderScreens.LoginScreen.name) {
+            LoginScreen()
         }
     }
 }

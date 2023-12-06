@@ -83,7 +83,7 @@ fun InputField(
             visualTransformation = visualTransformation,
             textStyle = TextStyle(fontWeight = FontWeight.Bold),
             placeholder = {
-                Text(text = placeHolderText, color = Color.LightGray)
+                Text(text = placeHolderText, color = Color.LightGray, fontSize = 15.sp)
             },
             supportingText = {
                 if (isError)
@@ -94,6 +94,6 @@ fun InputField(
                 else null
             }
         )
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(5.dp))
     }
 }
