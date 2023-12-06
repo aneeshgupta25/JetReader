@@ -30,18 +30,18 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
 
-                    val db = FirebaseFirestore.getInstance()
-                    val user: MutableMap<String, Any> = HashMap()
-                    user["firstName"] = "Aneesh"
-                    user["lastName"] = "Gupta"
-                    db.collection("users")
-                        .add(user)
-                        .addOnSuccessListener {
-                            Log.d("Firebase", "onCreate: ${it.id}")
-                        }
-                        .addOnFailureListener {
-                            Log.d("Firebase", "onCreate: $it")
-                        }
+//                    val db = FirebaseFirestore.getInstance()
+//                    val user: MutableMap<String, Any> = HashMap()
+//                    user["firstName"] = "Aneesh"
+//                    user["lastName"] = "Gupta"
+//                    db.collection("users")
+//                        .add(user)
+//                        .addOnSuccessListener {
+//                            Log.d("Firebase", "onCreate: ${it.id}")
+//                        }
+//                        .addOnFailureListener {
+//                            Log.d("Firebase", "onCreate: $it")
+//                        }
                     ReaderNavigation()
                 }
             }

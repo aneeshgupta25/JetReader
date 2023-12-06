@@ -39,8 +39,6 @@ fun ProgressBar(radius: Float = 60f) {
             val x = centerX + (radius * sin(angle).toFloat())
             val y = centerY + (radius * cos(angle).toFloat())
 
-            Log.d("TAG", "ProgressBar: $x $y")
-
             drawCircle(AppConstants.DarkYellow, r, Offset(x,y))
         }
     }

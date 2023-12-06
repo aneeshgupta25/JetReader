@@ -25,6 +25,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,27 +37,38 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.jetreader.components.CustomButton
 import com.example.jetreader.components.InputField
 import com.example.jetreader.components.InputViewModel
+import com.example.jetreader.screens.login.LoginViewModel
 import com.example.jetreader.utils.AppConstants
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun RegisterScreen(
-    inputViewModel: InputViewModel = InputViewModel()
+    inputViewModel: InputViewModel = viewModel(),
+    loginViewModel: LoginViewModel = viewModel()
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp)
-            ) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-            }
+            TopAppBar(
+                title = { /*TODO*/ },
+                navigationIcon = {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back"
+                    )
+                })
+//            Row(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(10.dp)
+//            ) {
+//                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+//            }
         }
     ) {
         Box(modifier = Modifier.padding(it)) {
@@ -83,14 +95,16 @@ fun RegisterScreen(
                             onValueChange = { inputViewModel.updateUsername(it) },
                             placeHolderText = "Enter your username",
                             isError = inputViewModel.usernameError,
-                            errorText = "Username should be at least 6 chars long")
+                            errorText = "Username should be at least 6 chars long"
+                        )
                         InputField(
                             label = "Email", type = KeyboardType.Email,
                             value = inputViewModel.email,
                             onValueChange = { inputViewModel.updateEmail(it) },
                             placeHolderText = "Enter your Email ID",
                             isError = inputViewModel.emailError,
-                            errorText = "Enter a valid email ID")
+                            errorText = "Enter a valid email ID"
+                        )
                         InputField(
                             label = "Password", type = KeyboardType.Password,
                             value = inputViewModel.password,
@@ -144,7 +158,11 @@ fun RegisterScreen(
                         text = "Sign Up",
                         shadow = true
                     ) {
-                        inputViewModel.submitRegForm()
+                        if (inputViewModel.submitRegForm()) loginViewModel.createUserWithEmailAndPassword(
+                            email = inputViewModel.email,
+                            password = inputViewModel.password,
+                            username = inputViewModel.username
+                        )
                     }
                 }
             }

@@ -26,6 +26,7 @@ import androidx.navigation.NavController
 import com.example.jetreader.R
 import com.example.jetreader.components.ProgressBar
 import com.example.jetreader.navigation.ReaderScreens
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 
 
@@ -54,6 +55,11 @@ fun SplashScreen(
                 )
             )
             delay(2000)
+//            if(FirebaseAuth.getInstance().currentUser?.email.isNullOrEmpty()) {
+//                navController.navigate(ReaderScreens.OnBoardScreen.name)
+//            } else {
+//                navController.navigate(ReaderScreens.HomeScreen.name)
+//            }
             navController.navigate(ReaderScreens.OnBoardScreen.name)
         }
 

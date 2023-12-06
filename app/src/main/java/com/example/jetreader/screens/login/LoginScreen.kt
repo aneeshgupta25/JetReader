@@ -22,6 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,6 +34,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.jetreader.components.CustomButton
 import com.example.jetreader.components.InputField
 import com.example.jetreader.components.InputViewModel
@@ -42,18 +44,27 @@ import com.example.jetreader.utils.AppConstants
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
-    inputViewModel: InputViewModel = InputViewModel()
+    inputViewModel: InputViewModel = viewModel(),
+    loginViewModel: LoginViewModel = viewModel()
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp)
-            ) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-            }
+            TopAppBar(
+                title = { /*TODO*/ },
+                navigationIcon = {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back"
+                    )
+                })
+//            Row(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(10.dp)
+//            ) {
+//                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+//            }
         }
     ) {
         Box(modifier = Modifier.padding(it)) {
@@ -80,14 +91,14 @@ fun LoginScreen(
                         )
                         Spacer(modifier = Modifier.height(20.dp))
                         InputField(
-                            label = "Username", type = KeyboardType.Text,
-                            value = inputViewModel.username,
-                            onValueChange = { inputViewModel.updateUsername(it) },
-                            placeHolderText = "Enter your username",
-                            isError = inputViewModel.usernameError,
-                            errorText = if (inputViewModel.username.trim()
+                            label = "Email", type = KeyboardType.Email,
+                            value = inputViewModel.email,
+                            onValueChange = { inputViewModel.updateEmail(it) },
+                            placeHolderText = "Enter your email ID",
+                            isError = inputViewModel.emailError,
+                            errorText = if (inputViewModel.email.trim()
                                     .isEmpty()
-                            ) "Username can't be empty" else "This username doesn't exist in our database"
+                            ) "email ID can't be empty" else "This email ID doesn't exist in our database"
                         )
 
                         InputField(
@@ -109,7 +120,9 @@ fun LoginScreen(
                                 }
                             },
                             visualTransformation = if (inputViewModel.passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                            errorText = if(inputViewModel.password.trim().isEmpty()) "Password can't be empty" else "Incorrect Password"
+                            errorText = if (inputViewModel.password.trim()
+                                    .isEmpty()
+                            ) "Password can't be empty" else "Incorrect Password"
                         )
                         //TODO: update errorText of both fields
                     }
@@ -123,6 +136,10 @@ fun LoginScreen(
                         shadow = true
                     ) {
                         inputViewModel.submitRegForm()
+                        loginViewModel.signInWithEmailAndPassword(
+                            inputViewModel.email,
+                            inputViewModel.password
+                        )
                     }
                 }
             }

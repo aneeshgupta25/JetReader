@@ -41,6 +41,6 @@ class InputViewModel: ViewModel() {
         confirmPasswordError = confirmPassword.trim().isEmpty() || confirmPassword != password
         emailError = email.trim().isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email.trim()).matches()
 
-        return !(!usernameError && !passwordError && !confirmPasswordError && !emailError)
+        return !(usernameError || passwordError || confirmPasswordError || emailError)
     }
 }
