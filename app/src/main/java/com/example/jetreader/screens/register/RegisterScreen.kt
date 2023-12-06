@@ -1,6 +1,7 @@
 package com.example.jetreader.screens.register
 
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,8 +29,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -38,7 +42,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.jetreader.R
 import com.example.jetreader.components.CustomButton
+import com.example.jetreader.components.CustomTopBar
 import com.example.jetreader.components.InputField
 import com.example.jetreader.components.InputViewModel
 import com.example.jetreader.screens.login.LoginViewModel
@@ -53,23 +59,7 @@ fun RegisterScreen(
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                title = { /*TODO*/ },
-                navigationIcon = {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back"
-                    )
-                })
-//            Row(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(10.dp)
-//            ) {
-//                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-//            }
-        }
+        topBar = { CustomTopBar() }
     ) {
         Box(modifier = Modifier.padding(it)) {
             Column(
