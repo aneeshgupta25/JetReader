@@ -7,8 +7,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class InputViewModel: ViewModel() {
+@HiltViewModel
+class InputViewModel @Inject constructor() : ViewModel() {
 
     var username by mutableStateOf("")
         private set

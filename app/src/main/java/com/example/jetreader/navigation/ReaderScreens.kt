@@ -5,7 +5,8 @@ enum class ReaderScreens {
     OnBoardScreen,
     LoginScreen,
     RegisterScreen,
-    HomeScreen;
+    HomeScreen,
+    BookDetailsScreen;
 
     companion object {
         fun fromRoute(route: String?): ReaderScreens =
@@ -15,6 +16,7 @@ enum class ReaderScreens {
                 LoginScreen.name -> LoginScreen
                 RegisterScreen.name -> RegisterScreen
                 HomeScreen.name -> HomeScreen
+                BookDetailsScreen.name -> BookDetailsScreen
                 null -> SplashScreen
                 else -> throw IllegalArgumentException("Route $route is not recognised")
             }

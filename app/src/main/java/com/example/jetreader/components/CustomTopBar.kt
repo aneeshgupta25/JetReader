@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 fun CustomTopBar() {
     Row(
         modifier = Modifier.padding(vertical = 5.dp, horizontal = 10.dp)
-            .fillMaxHeight(0.1f)
+            .fillMaxHeight(0.075f)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
