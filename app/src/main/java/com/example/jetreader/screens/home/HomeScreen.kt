@@ -273,8 +273,7 @@ fun SearchResults(
                     items(count = list!!.size) {
                         BookCard(
                             modifier = Modifier
-                                .height(AppConstants.getScreenHeightInDp() / 3)
-                                .width(AppConstants.getScreenWidthInDp() / 3),
+                                .height(AppConstants.getScreenHeightInDp().times(0.4f)),
                             textSize = 12.sp,
                             ratingSize = 10.sp,
                             book = list[it],

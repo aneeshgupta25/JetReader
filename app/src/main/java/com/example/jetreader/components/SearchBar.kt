@@ -21,10 +21,14 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.currentCompositionLocalContext
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -44,6 +48,12 @@ fun SearchBar(
 ) {
     val context = LocalContext.current
     val keyboard = LocalSoftwareKeyboardController.current
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+
     Row(
         modifier = Modifier
             .padding(10.dp)
@@ -61,13 +71,22 @@ fun SearchBar(
             )
         }
         OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusRequester(focusRequester),
             value = searchViewModel.searchText,
             onValueChange = { searchViewModel.updateSearchText(it) },
             shape = RoundedCornerShape(corner = CornerSize(15.dp)),
             textStyle = TextStyle(fontWeight = FontWeight.Bold),
             singleLine = true,
-            keyboardActions = KeyboardActions.Default,
+            keyboardActions = KeyboardActions(
+                onSearch = {
+                    if (searchViewModel.isSearchQueryValid() == false) Toast.makeText(
+                        context, "Field can't be empty!", Toast.LENGTH_SHORT
+                    ).show()
+                    else keyboard?.hide()
+                }
+            ),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             leadingIcon = {
                 IconButton(

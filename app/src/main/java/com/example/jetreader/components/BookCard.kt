@@ -57,6 +57,7 @@ fun BookCard(
 ) {
     Card(
         modifier = modifier.background(Color.White),
+        shape = RoundedCornerShape(corner = CornerSize(10.dp)),
         onClick = { navController.navigate(ReaderScreens.BookDetailsScreen.name + "/${book!!.id}") }
     ) {
         Column(
