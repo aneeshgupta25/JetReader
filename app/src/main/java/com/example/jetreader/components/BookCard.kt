@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,6 +44,7 @@ import com.example.jetreader.R
 import com.example.jetreader.model.volume.Book
 import com.example.jetreader.navigation.ReaderScreens
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookCard(
     modifier: Modifier = Modifier,
@@ -53,87 +55,84 @@ fun BookCard(
     book: Book?,
     navController: NavController
 ) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.clickable {
-            navController.navigate(ReaderScreens.BookDetailsScreen.name+"/${book!!.id}")
-        }
+    Card(
+        modifier = modifier.background(Color.White),
+        onClick = { navController.navigate(ReaderScreens.BookDetailsScreen.name + "/${book!!.id}") }
     ) {
-        Card(
-            modifier = Modifier
-                .fillMaxHeight(0.7f)
-                .fillMaxWidth(),
-            shape = RoundedCornerShape(corner = CornerSize(10.dp)),
-            colors = CardDefaults.cardColors(containerColor = Color.White)
-        ) {
-            val imageUrl =
-                if (book!!.volumeInfo.imageLinks == null || book.volumeInfo.imageLinks!!.thumbnail.isNullOrEmpty())
-                    "https://images.theconversation.com/files/45159/original/rptgtpxd-1396254731.jpg?ixlib=rb-1.1.0&q=45&auto=format&w=754&fit=clip"
-                else
-                    book.volumeInfo.imageLinks!!.thumbnail.replace("http://", "https://")
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(imageUrl)
-                    .crossfade(true)
-                    .build(),
-                modifier = Modifier.fillMaxSize(),
-                onError = {
-                    Log.d("Error", "BookCard: Error ${book.id}")
-                },
-                contentDescription = "Image of Book",
-                contentScale = ContentScale.FillBounds
-            )
-        }
-        Spacer(modifier = Modifier.height(5.dp))
         Column(
-            modifier = Modifier
-                .fillMaxHeight()
-                .fillMaxWidth()
-                .background(Color.White),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = modifier.background(Color.White)
         ) {
-            Column(
-                modifier = Modifier.fillMaxHeight(0.6f).fillMaxWidth()
+            Card(
+                modifier = Modifier
+                    .fillMaxHeight(0.7f)
+                    .fillMaxWidth(),
+                shape = RoundedCornerShape(corner = CornerSize(10.dp)),
+                colors = CardDefaults.cardColors(containerColor = Color.White)
             ) {
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = book!!.volumeInfo.title,
-                    fontSize = textSize,
-                    fontWeight = FontWeight.Bold,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Spacer(modifier = Modifier.height(5.dp))
-                var authors: String = ""
-                if(book.volumeInfo.authors != null) {
-                    for (i in 0 until book.volumeInfo.authors.size) {
-                        authors += book.volumeInfo.authors[i]
-                        if (i != book.volumeInfo.authors.size - 1) authors += ", "
-                    }
-                }
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = authors,
-                    fontSize = authorSize,
-                    fontWeight = FontWeight.Medium,
-                    overflow = TextOverflow.Ellipsis
+                var imageUrl =
+                    book?.volumeInfo?.imageLinks?.thumbnail?.replace("http://", "https://")
+                        ?: "https://images.theconversation.com/files/45159/original/rptgtpxd-1396254731.jpg?ixlib=rb-1.1.0&q=45&auto=format&w=754&fit=clip"
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(imageUrl)
+                        .crossfade(true)
+                        .build(),
+                    modifier = Modifier.fillMaxSize(),
+                    onError = {
+                        Log.d("Error", "BookCard: Error $it")
+                    },
+                    contentDescription = "Image of Book",
+                    contentScale = ContentScale.FillBounds
                 )
             }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxSize()
+            Spacer(modifier = Modifier.height(5.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth()
+                    .background(Color.White),
             ) {
-                Icon(
-                    imageVector = Icons.Filled.Star,
-                    contentDescription = "Rating",
-                    modifier = Modifier.size(20.dp),
-                    tint = Color.Gray
-                )
-                Spacer(modifier = Modifier.width(5.dp))
-                Text(
-                    text = if (book!!.volumeInfo.averageRating == null) rating else book!!.volumeInfo.averageRating.toString(),
-                    fontSize = ratingSize,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.Gray
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight(0.6f)
+                        .fillMaxWidth()
+                ) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = book?.volumeInfo?.title ?: "",
+                        fontSize = textSize,
+                        fontWeight = FontWeight.Bold,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Spacer(modifier = Modifier.height(5.dp))
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = book?.volumeInfo?.authors.toString()
+                            .replace("[", "").replace("]", "") ?: "",
+                        fontSize = authorSize,
+                        fontWeight = FontWeight.Medium,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Star,
+                        contentDescription = "Rating",
+                        modifier = Modifier.size(20.dp),
+                        tint = Color.Gray
+                    )
+                    Spacer(modifier = Modifier.width(5.dp))
+                    Text(
+                        text = if (book?.volumeInfo?.averageRating != null) book.volumeInfo.averageRating.toString() else "4.2",
+                        fontSize = ratingSize,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.Gray
+                    )
+                }
             }
         }
     }

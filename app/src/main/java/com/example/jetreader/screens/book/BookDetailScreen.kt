@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.text.HtmlCompat
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.jetreader.R
@@ -74,14 +75,19 @@ fun BookDetailScreen(
                             .fillMaxHeight(0.35f)
                             .fillMaxWidth()
                     ) {
-                        val imageUrl =
-                            if (bookData.volumeInfo.imageLinks == null || bookData.volumeInfo.imageLinks!!.thumbnail.isEmpty())
-                                "https://images.theconversation.com/files/45159/original/rptgtpxd-1396254731.jpg?ixlib=rb-1.1.0&q=45&auto=format&w=754&fit=clip"
-                            else
-                                bookData.volumeInfo.imageLinks!!.thumbnail.replace(
-                                    "http://",
-                                    "https://"
-                                )
+                        var imageUrl = bookData?.volumeInfo?.imageLinks?.thumbnail?.replace(
+                            "http://",
+                            "https://"
+                        )
+                            ?: "https://images.theconversation.com/files/45159/original/rptgtpxd-1396254731.jpg?ixlib=rb-1.1.0&q=45&auto=format&w=754&fit=clip"
+//                        val imageUrl =
+//                            if (bookData?.volumeInfo?.imageLinks == null || bookData.volumeInfo.imageLinks!!.thumbnail.isEmpty())
+//                                "https://images.theconversation.com/files/45159/original/rptgtpxd-1396254731.jpg?ixlib=rb-1.1.0&q=45&auto=format&w=754&fit=clip"
+//                            else
+//                                bookData.volumeInfo.imageLinks!!.thumbnail.replace(
+//                                    "http://",
+//                                    "https://"
+//                                )
                         AsyncImage(
                             model = ImageRequest.Builder(LocalContext.current)
                                 .data(imageUrl)
@@ -116,7 +122,7 @@ fun BookDetailScreen(
                                 verticalArrangement = Arrangement.spacedBy(10.dp)
                             ) {
                                 Text(
-                                    text = bookData.volumeInfo.title,
+                                    text = bookData?.volumeInfo?.title ?: "",
                                     fontSize = 21.sp,
                                     fontWeight = FontWeight.Bold,
                                     lineHeight = 30.sp
@@ -126,7 +132,7 @@ fun BookDetailScreen(
                                 verticalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Text(
-                                    text = bookData.volumeInfo.subtitle ?: "",
+                                    text = bookData?.volumeInfo?.subtitle ?: "",
                                     fontSize = 18.sp,
                                     fontWeight = FontWeight.SemiBold,
                                     lineHeight = 25.sp
@@ -134,20 +140,15 @@ fun BookDetailScreen(
                                 Column(
                                     verticalArrangement = Arrangement.spacedBy(10.dp)
                                 ) {
-                                    var authors: String = ""
-                                    if (bookData.volumeInfo.authors != null) {
-                                        for (i in 0 until bookData!!.volumeInfo.authors!!.size) {
-                                            authors += bookData.volumeInfo.authors!![i]
-                                            if (i != bookData.volumeInfo.authors!!.size - 1) authors += ", "
-                                        }
-                                    }
                                     Text(
-                                        text = authors, fontWeight = FontWeight.Bold,
+                                        text = bookData?.volumeInfo?.authors.toString()
+                                            .replace("[", "").replace("]", "") ?: "",
+                                        fontWeight = FontWeight.Bold,
                                         fontSize = 16.sp,
                                         color = AppConstants.DarkYellow
                                     )
                                     Text(
-                                        text = if (bookData.volumeInfo.publishedDate != null) "Released on ${bookData.volumeInfo.publishedDate}" else "",
+                                        text = bookData?.volumeInfo?.publishedDate ?: "",
                                         fontSize = 16.sp,
                                         fontWeight = FontWeight.Medium
                                     )
@@ -171,11 +172,14 @@ fun BookDetailScreen(
                         Column(
                             modifier = Modifier.verticalScroll(state = rememberScrollState())
                         ) {
-                            var description = bookData.volumeInfo.description.replace("<p>", "")
-                            description = description.replace("</p>", "")
-                            description = description.replace("<br>", "")
+                            val cleanDescription = bookData?.volumeInfo?.description?.let { it1 ->
+                                HtmlCompat.fromHtml(
+                                    it1,
+                                    HtmlCompat.FROM_HTML_MODE_LEGACY
+                                ).toString()
+                            }
                             Text(
-                                text = description,
+                                text = cleanDescription ?: "Unable to fetch Data!",
                                 fontSize = 18.sp
                             )
                         }
