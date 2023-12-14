@@ -66,11 +66,11 @@ fun OnboardScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            CustomButton(darkBackground = true, text = "Get Started", shadow = false) {
+            CustomButton(modifier = Modifier.padding(horizontal = 15.dp), backgroundColor = AppConstants.DarkYellow, textColor = Color.White, text = "Get Started", shadow = false) {
                 navController.navigate(ReaderScreens.RegisterScreen.name)
             }
             Spacer(modifier = Modifier.height(20.dp))
-            CustomButton(darkBackground = false, text = "I already have an Account", shadow = false) {
+            CustomButton(modifier = Modifier.padding(horizontal = 15.dp), backgroundColor = AppConstants.LightYellow, textColor = AppConstants.DarkYellow, text = "I already have an account", shadow = false) {
                 navController.navigate(ReaderScreens.HomeScreen.name)
             }
         }

@@ -144,7 +144,7 @@ fun RegisterScreen(
                     Divider(thickness = 1.dp, color = Color.LightGray)
                     CustomButton(
                         modifier = Modifier.padding(vertical = 20.dp),
-                        darkBackground = true,
+                        backgroundColor = AppConstants.DarkYellow, textColor = Color.White,
                         text = "Sign Up",
                         shadow = true
                     ) {

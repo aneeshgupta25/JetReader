@@ -24,19 +24,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.jetreader.utils.AppConstants
 
-@Preview
+//@Preview
 @Composable
 fun CustomButton(
     modifier: Modifier = Modifier,
     text: String = "Get Started",
-    darkBackground: Boolean = false,
     shadow: Boolean = false,
+    backgroundColor: Color,
+    textColor: Color,
     onClick: () -> Unit = {}
 ) {
-    Button(onClick = onClick,
-        modifier = modifier.fillMaxWidth()
-            .height(50.dp)
-            .padding(horizontal = 15.dp),
+    Button(
+        onClick = onClick,
+        modifier = modifier
+            .fillMaxWidth()
+            .height(AppConstants.getScreenHeightInDp().times(0.07f)),
         contentPadding = PaddingValues(0.dp),
         elevation = ButtonDefaults.buttonElevation(defaultElevation = if (shadow) 10.dp else 0.dp),
     ) {
@@ -45,8 +47,7 @@ fun CustomButton(
                 .fillMaxSize(),
             shape = RoundedCornerShape(corner = CornerSize(20.dp)),
             colors = CardDefaults.cardColors(
-                if (darkBackground) AppConstants.DarkYellow
-                else AppConstants.LightYellow
+                backgroundColor
             )
         ) {
             Box(
@@ -58,7 +59,7 @@ fun CustomButton(
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center,
                     fontSize = 15.sp,
-                    color = if (darkBackground) Color.White else AppConstants.DarkYellow,
+                    color = textColor,
                     fontWeight = FontWeight.Medium
                 )
             }
