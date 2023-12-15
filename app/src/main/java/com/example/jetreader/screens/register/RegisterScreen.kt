@@ -55,7 +55,7 @@ import com.example.jetreader.utils.AppConstants
 @Composable
 fun RegisterScreen(
     inputViewModel: InputViewModel = viewModel(),
-    loginViewModel: LoginViewModel = viewModel()
+    registerViewModel: RegisterViewModel = viewModel()
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -148,7 +148,7 @@ fun RegisterScreen(
                         text = "Sign Up",
                         shadow = true
                     ) {
-                        if (inputViewModel.submitRegForm()) loginViewModel.createUserWithEmailAndPassword(
+                        if (inputViewModel.submitRegForm()) registerViewModel.createUserWithEmailAndPassword(
                             email = inputViewModel.email,
                             password = inputViewModel.password,
                             username = inputViewModel.username

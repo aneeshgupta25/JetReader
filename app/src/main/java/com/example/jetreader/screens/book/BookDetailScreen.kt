@@ -1,6 +1,7 @@
 package com.example.jetreader.screens.book
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
@@ -25,6 +26,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,7 +57,7 @@ import com.example.jetreader.utils.AppConstants
 fun BookDetailScreen(
     bookId: String,
     bookDetailsViewModel: BookDetailsViewModel,
-    addedToCart: Boolean = false
+    fireStoreId: String? = null
 ) {
     Scaffold(
         topBar = {
@@ -71,13 +76,22 @@ fun BookDetailScreen(
                     ProgressBar()
                 }
             else
-                BookDetails(bookData = bookData, addedToCart = addedToCart)
+                BookDetails(
+                    bookData = bookData,
+                    fireStoreId = fireStoreId,
+                    bookDetailsViewModel = bookDetailsViewModel
+                )
         }
     }
 }
 
 @Composable
-fun BookDetails(bookData: Book, addedToCart: Boolean) {
+fun BookDetails(bookData: Book, fireStoreId: String?, bookDetailsViewModel: BookDetailsViewModel) {
+    var buttonState by remember {
+        mutableStateOf(!fireStoreId.equals("null"))
+    }
+    Log.d("BOOK_DETAILS", "BookDetails: $buttonState $fireStoreId")
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -87,10 +101,26 @@ fun BookDetails(bookData: Book, addedToCart: Boolean) {
         BookHeader(bookData = bookData)
         BookAbout(bookData = bookData)
         CustomButton(
-            backgroundColor = if (addedToCart) Color.Red else AppConstants.DarkYellow,
+            backgroundColor = if (buttonState) Color.Red else AppConstants.DarkYellow,
             textColor = Color.White,
-            text = if (addedToCart) "Remove from Cart" else "Add to Cart"
-        )
+            text = if (buttonState) "Remove from Cart" else "Add to Cart"
+        ) {
+            if (!buttonState) {
+                if (bookDetailsViewModel.saveToCart()) {
+                    buttonState = !buttonState
+                    Toast.makeText(context, "Added to Cart", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context, "Something went wrong!", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                if (bookDetailsViewModel.removeFromCart(fireStoreId = fireStoreId!!)) {
+                    buttonState = !buttonState
+                    Toast.makeText(context, "Removed from Cart", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context, "Something went wrong!", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 }
 
@@ -173,9 +203,9 @@ fun BookHeader(bookData: Book) {
                     fontWeight = FontWeight.Bold,
                     lineHeight = 30.sp
                 )
-                if (bookData?.volumeInfo?.subtitle != null) {
+                if (!bookData?.volumeInfo?.subtitle.isNullOrEmpty()) {
                     Text(
-                        text = "- ${bookData.volumeInfo.subtitle}",
+                        text = "- ${bookData.volumeInfo!!.subtitle}",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.SemiBold,
                         lineHeight = 25.sp
@@ -184,7 +214,8 @@ fun BookHeader(bookData: Book) {
                 if (bookData?.volumeInfo?.categories != null) {
                     Text(
                         text = "Categories - ${
-                            bookData.volumeInfo.categories.toString().replace("[", "").replace("]", "")
+                            bookData.volumeInfo!!.categories.toString().replace("[", "")
+                                .replace("]", "")
                         }",
                         fontSize = 16.sp,
                         maxLines = 2,
@@ -202,11 +233,13 @@ fun BookHeader(bookData: Book) {
                     fontSize = 16.sp,
                     color = AppConstants.DarkYellow
                 )
-                Text(
-                    text = bookData?.volumeInfo?.publishedDate ?: "",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium
-                )
+                if (!bookData?.volumeInfo?.publishedDate.isNullOrEmpty()) {
+                    Text(
+                        text = "Published on: ${bookData?.volumeInfo?.publishedDate}",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
             }
         }
     }

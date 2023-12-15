@@ -4,8 +4,6 @@ import android.annotation.SuppressLint
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 
 import androidx.compose.foundation.layout.Box
@@ -35,8 +33,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.currentCompositionLocalContext
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,19 +41,17 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.jetreader.R
 import com.example.jetreader.components.BookCard
-import com.example.jetreader.components.InputViewModel
 import com.example.jetreader.components.ProgressBar
 import com.example.jetreader.components.SearchBar
+import com.example.jetreader.components.SearchBookCard
 import com.example.jetreader.data.GenreData
 import com.example.jetreader.model.volume.Book
-import com.example.jetreader.repository.ReaderRepository
 import com.example.jetreader.utils.AppConstants
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -66,6 +60,7 @@ import com.example.jetreader.utils.AppConstants
 @Composable
 fun HomeScreen(
     searchViewModel: SearchViewModel,
+    homeScreenViewModel: HomeScreenViewModel,
     navController: NavController
 ) {
     Scaffold(topBar = {
@@ -79,8 +74,12 @@ fun HomeScreen(
                 targetState = searchViewModel.searchContentVisible,
                 label = "HomeScreen Content"
             ) {
-                if (!it) HomeContent(searchViewModel, navController)
-                else SearchResults(searchViewModel, navController = navController)
+                if (!it) HomeContent(searchViewModel, homeScreenViewModel, navController)
+                else SearchResults(
+                    searchViewModel = searchViewModel,
+                    homeScreenViewModel = homeScreenViewModel,
+                    navController = navController
+                )
             }
         }
     }
@@ -126,6 +125,7 @@ fun HomeTopBar(
 @Composable
 fun HomeContent(
     searchViewModel: SearchViewModel,
+    homeScreenViewModel: HomeScreenViewModel,
     navController: NavController
 ) {
     Column(
@@ -135,21 +135,35 @@ fun HomeContent(
             .verticalScroll(state = rememberScrollState(), enabled = true)
     ) {
         Categories(isCategory = false) {
-            if (searchViewModel.defaultList.isNullOrEmpty()) {
+//            if (homeScreenViewModel.data.value.e != null)
+//                Text(text = "Something went wrong!!")
+            if (searchViewModel.defaultList.isNullOrEmpty())
                 ProgressBar()
-            } else
+            else
                 LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     items(searchViewModel.defaultList!!.size) {
                         BookCard(
                             modifier = Modifier
-                                .height(AppConstants.getScreenHeightInDp() / 3)
-                                .width(AppConstants.getScreenWidthInDp() / 3),
+                                .height(
+                                    AppConstants
+                                        .getScreenHeightInDp()
+                                        .times(0.4f)
+                                )
+                                .width(
+                                    AppConstants
+                                        .getScreenWidthInDp()
+                                        .times(0.38f)
+                                ),
                             textSize = 15.sp,
                             authorSize = 12.sp,
                             ratingSize = 10.sp,
                             book = searchViewModel.defaultList!![it],
+                            fireStoreId = isBookInCart(
+                                homeScreenViewModel,
+                                searchViewModel.defaultList!![it]
+                            ),
                             navController = navController
                         )
                     }
@@ -165,8 +179,16 @@ fun HomeContent(
                 items(count = list.size) {
                     Box(
                         modifier = Modifier
-                            .width(AppConstants.getScreenWidthInDp() / 2)
-                            .height(AppConstants.getScreenHeightInDp() / 8)
+                            .width(
+                                AppConstants
+                                    .getScreenWidthInDp()
+                                    .times(0.5f)
+                            )
+                            .height(
+                                AppConstants
+                                    .getScreenHeightInDp()
+                                    .times(0.14f)
+                            )
                             .clip(RoundedCornerShape(corner = CornerSize(10.dp)))
                     ) {
                         Image(
@@ -191,25 +213,38 @@ fun HomeContent(
         Categories(
             category = "On Your Wishlist"
         ) {
-            if (searchViewModel.defaultList.isNullOrEmpty()) {
+            if (homeScreenViewModel.booksFromCart.value.e != null)
+                Text(text = "Something went wrong!!")
+            else if (homeScreenViewModel.booksFromCart.value.data.isNullOrEmpty())
                 ProgressBar()
-            } else
+            else {
+                var list = homeScreenViewModel.booksFromCart.value.data
                 LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    items(searchViewModel.defaultList!!.size) {
+                    items(list!!.size) {
                         BookCard(
                             modifier = Modifier
-                                .height(AppConstants.getScreenHeightInDp() / 3)
-                                .width(AppConstants.getScreenWidthInDp() / 3),
+                                .height(
+                                    AppConstants
+                                        .getScreenHeightInDp()
+                                        .times(0.4f)
+                                )
+                                .width(
+                                    AppConstants
+                                        .getScreenWidthInDp()
+                                        .times(0.38f)
+                                ),
                             textSize = 15.sp,
                             authorSize = 12.sp,
                             ratingSize = 10.sp,
-                            book = searchViewModel.defaultList!![it],
+                            book = list[it].book,
+                            fireStoreId = isBookInCart(homeScreenViewModel, list[it].book!!),
                             navController = navController
                         )
                     }
                 }
+            }
         }
     }
 }
@@ -223,7 +258,8 @@ fun Categories(
 ) {
     Column(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxWidth(),
+        verticalArrangement = Arrangement.Center
     ) {
         if (isCategory) Row(
             modifier = Modifier.fillMaxWidth(),
@@ -242,13 +278,14 @@ fun Categories(
         Box(modifier = Modifier.clip(RoundedCornerShape(corner = CornerSize(cornerRadius)))) {
             content()
         }
-        Spacer(modifier = Modifier.height(15.dp))
+        Spacer(modifier = Modifier.height(10.dp))
     }
 }
 
 @Composable
 fun SearchResults(
     searchViewModel: SearchViewModel,
+    homeScreenViewModel: HomeScreenViewModel,
     navController: NavController
 ) {
     Column {
@@ -265,23 +302,38 @@ fun SearchResults(
             } else {
                 val list = searchViewModel.searchResult
                 LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    contentPadding = PaddingValues(vertical = 15.dp, horizontal = 10.dp),
+                    columns = GridCells.Fixed(1),
+                    contentPadding = PaddingValues(vertical = 15.dp, horizontal = 15.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     items(count = list!!.size) {
-                        BookCard(
-                            modifier = Modifier
-                                .height(AppConstants.getScreenHeightInDp().times(0.4f)),
-                            textSize = 12.sp,
-                            ratingSize = 10.sp,
+                        SearchBookCard(
                             book = list[it],
+                            fireStoreId = isBookInCart(homeScreenViewModel, list[it]),
                             navController = navController
                         )
+//                        BookCard(
+//                            modifier = Modifier
+//                                .height(AppConstants.getScreenHeightInDp().times(0.4f)),
+//                            textSize = 12.sp,
+//                            ratingSize = 10.sp,
+//                            book = list[it],
+//                            fireStoreId = isBookInCart(homeScreenViewModel, list[it]),
+//                            navController = navController
+//                        )
                     }
                 }
             }
         }
     }
+}
+
+fun isBookInCart(
+    homeScreenViewModel: HomeScreenViewModel,
+    book: Book
+): String? {
+    val bookFound =
+        homeScreenViewModel.booksFromCart.value.data?.find { book.id.equals(it.book?.id) }
+    return bookFound?.id
 }

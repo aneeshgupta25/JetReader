@@ -37,18 +37,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.jetreader.components.CustomButton
 import com.example.jetreader.components.CustomTopBar
 import com.example.jetreader.components.InputField
 import com.example.jetreader.components.InputViewModel
+import com.example.jetreader.navigation.ReaderScreens
 import com.example.jetreader.utils.AppConstants
 
-@Preview
+//@Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
-    inputViewModel: InputViewModel = viewModel(),
-    loginViewModel: LoginViewModel = viewModel()
+    inputViewModel: InputViewModel,
+    loginViewModel: LoginViewModel,
+    navController: NavController
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -125,9 +128,13 @@ fun LoginScreen(
                     ) {
                         inputViewModel.submitRegForm()
                         loginViewModel.signInWithEmailAndPassword(
-                            inputViewModel.email,
-                            inputViewModel.password
-                        )
+//                            inputViewModel.email,
+//                            inputViewModel.password
+                            "aneeshgupta2512@gmail.com",
+                            "123456"
+                        ) {
+                            navController.navigate(ReaderScreens.HomeScreen.name)
+                        }
                     }
                 }
             }

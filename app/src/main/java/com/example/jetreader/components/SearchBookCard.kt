@@ -1,18 +1,16 @@
 package com.example.jetreader.components
 
 import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -28,47 +26,46 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
-import com.example.jetreader.R
 import com.example.jetreader.model.volume.Book
 import com.example.jetreader.navigation.ReaderScreens
+import com.example.jetreader.utils.AppConstants
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BookCard(
-    modifier: Modifier = Modifier,
-    textSize: TextUnit = 15.sp,
-    authorSize: TextUnit = 12.sp,
-    ratingSize: TextUnit = 10.sp,
-    book: Book?,
+fun SearchBookCard(
+    book: Book,
     fireStoreId: String?,
     navController: NavController,
 ) {
     Card(
-        modifier = modifier.background(Color.Transparent),
+        modifier = Modifier
+            .height(
+                AppConstants
+                    .getScreenHeightInDp()
+                    .times(0.20f)
+            )
+            .fillMaxWidth()
+            .background(color = Color.Transparent),
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-        shape = RoundedCornerShape(corner = CornerSize(10.dp)),
-        onClick = { navController.navigate(ReaderScreens.BookDetailsScreen.name + "/${book!!.id}/${fireStoreId}") }
+        onClick =
+        { navController.navigate(ReaderScreens.BookDetailsScreen.name + "/${book!!.id}/${fireStoreId}") }
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = modifier.background(Color.White)
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Card(
                 modifier = Modifier
-                    .fillMaxHeight(0.7f)
-                    .fillMaxWidth(),
+                    .fillMaxHeight()
+                    .fillMaxWidth(0.3f),
                 shape = RoundedCornerShape(corner = CornerSize(10.dp)),
                 colors = CardDefaults.cardColors(containerColor = Color.White)
             ) {
@@ -88,59 +85,45 @@ fun BookCard(
                     contentScale = ContentScale.FillBounds
                 )
             }
-            Spacer(modifier = Modifier.height(5.dp))
             Column(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth()
-                    .background(Color.White),
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(5.dp)
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxHeight(0.6f)
-                        .fillMaxWidth()
-                ) {
+                Text(
+                    text = book!!.volumeInfo!!.title!!,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                if (!book.volumeInfo!!.subtitle.isNullOrEmpty())
                     Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = book?.volumeInfo?.title ?: "",
-                        fontSize = textSize,
-                        fontWeight = FontWeight.Bold,
-                        overflow = TextOverflow.Ellipsis
+                        text = book.volumeInfo!!.subtitle!!,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold
                     )
-                    Spacer(modifier = Modifier.height(5.dp))
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = book?.volumeInfo?.authors.toString()
-                            .replace("[", "").replace("]", "") ?: "",
-                        fontSize = authorSize,
-                        fontWeight = FontWeight.Medium,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxSize()
+                    horizontalArrangement = Arrangement.spacedBy(5.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        imageVector = Icons.Filled.Star,
-                        contentDescription = "Rating",
-                        modifier = Modifier.size(20.dp),
+                        imageVector = Icons.Default.Star, contentDescription = "Rating",
+                        modifier = Modifier.size(15.dp),
                         tint = Color.Gray
                     )
-                    Spacer(modifier = Modifier.width(5.dp))
                     Text(
                         text = if (book?.volumeInfo?.averageRating != null) book.volumeInfo!!.averageRating.toString() else "4.2",
-                        fontSize = ratingSize,
+                        fontSize = 13.sp,
                         fontWeight = FontWeight.Medium,
                         color = Color.Gray
                     )
-                    Spacer(modifier = Modifier.width(10.dp))
+                }
+                if (book?.volumeInfo?.pageCount != null)
                     Text(
                         text = if (book?.volumeInfo?.pageCount != null) "${book.volumeInfo?.pageCount} pages" else "",
-                        fontSize = ratingSize,
+                        fontSize = 12.sp,
                         fontWeight = FontWeight.Medium
                     )
-                }
             }
         }
     }

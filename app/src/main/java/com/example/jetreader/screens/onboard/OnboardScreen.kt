@@ -71,7 +71,7 @@ fun OnboardScreen(
             }
             Spacer(modifier = Modifier.height(20.dp))
             CustomButton(modifier = Modifier.padding(horizontal = 15.dp), backgroundColor = AppConstants.LightYellow, textColor = AppConstants.DarkYellow, text = "I already have an account", shadow = false) {
-                navController.navigate(ReaderScreens.HomeScreen.name)
+                navController.navigate(ReaderScreens.LoginScreen.name)
             }
         }
     }
