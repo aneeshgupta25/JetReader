@@ -47,6 +47,7 @@ class SearchViewModel @Inject constructor(private val readerRepository: ReaderRe
     fun hideSearchContents() {
         searchBarVisible = false
         searchContentVisible = false
+        clearSearchText()
     }
 
     fun updateSearchText(input: String) {

@@ -1,6 +1,7 @@
 package com.example.jetreader.screens.home
 
 import android.annotation.SuppressLint
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -85,6 +86,11 @@ fun HomeScreen(
             }
         }
     }
+    BackHandler(
+        enabled = searchViewModel.searchBarVisible
+    ) {
+        searchViewModel.toggleSearchBarVisibility()
+    }
 }
 
 @Composable
@@ -138,8 +144,6 @@ fun HomeContent(
             .verticalScroll(state = rememberScrollState(), enabled = true)
     ) {
         Categories(categoryTitle = "", isCategory = false, navController = navController) {
-//            if (homeScreenViewModel.data.value.e != null)
-//                Text(text = "Something went wrong!!")
             if (searchViewModel.defaultList.isNullOrEmpty())
                 ProgressBar()
             else
@@ -335,15 +339,6 @@ fun SearchResults(
                             fireStoreId = isBookInCart(homeScreenViewModel, list[it]),
                             navController = navController
                         )
-//                        BookCard(
-//                            modifier = Modifier
-//                                .height(AppConstants.getScreenHeightInDp().times(0.4f)),
-//                            textSize = 12.sp,
-//                            ratingSize = 10.sp,
-//                            book = list[it],
-//                            fireStoreId = isBookInCart(homeScreenViewModel, list[it]),
-//                            navController = navController
-//                        )
                     }
                 }
             }
