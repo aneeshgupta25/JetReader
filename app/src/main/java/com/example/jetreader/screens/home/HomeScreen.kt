@@ -26,6 +26,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -52,6 +53,7 @@ import com.example.jetreader.components.SearchBar
 import com.example.jetreader.components.SearchBookCard
 import com.example.jetreader.data.GenreData
 import com.example.jetreader.model.volume.Book
+import com.example.jetreader.navigation.ReaderScreens
 import com.example.jetreader.utils.AppConstants
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -122,6 +124,7 @@ fun HomeTopBar(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeContent(
     searchViewModel: SearchViewModel,
@@ -134,7 +137,7 @@ fun HomeContent(
             .padding(horizontal = 10.dp)
             .verticalScroll(state = rememberScrollState(), enabled = true)
     ) {
-        Categories(isCategory = false) {
+        Categories(categoryTitle = "", isCategory = false, navController = navController) {
 //            if (homeScreenViewModel.data.value.e != null)
 //                Text(text = "Something went wrong!!")
             if (searchViewModel.defaultList.isNullOrEmpty())
@@ -170,14 +173,18 @@ fun HomeContent(
                 }
         }
         Categories(
-            category = "Explore by Genre", cornerRadius = 10.dp
+            categoryTitle = "Explore by Genre",
+            category = "Genre",
+            cornerRadius = 10.dp,
+            navController = navController,
+            showForwardIcon = false
         ) {
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 val list = GenreData.getGenreData()
                 items(count = list.size) {
-                    Box(
+                    Card(
                         modifier = Modifier
                             .width(
                                 AppConstants
@@ -188,30 +195,38 @@ fun HomeContent(
                                 AppConstants
                                     .getScreenHeightInDp()
                                     .times(0.14f)
-                            )
-                            .clip(RoundedCornerShape(corner = CornerSize(10.dp)))
+                            ),
+                        shape = RoundedCornerShape(corner = CornerSize(10.dp)),
+                        onClick = {
+                            navController.navigate(ReaderScreens.CategoriesScreen.name + "/${list[it].categoryType}")
+                        }
                     ) {
-                        Image(
-                            painter = painterResource(id = list[it].imageId),
-                            contentDescription = "genre",
-                            contentScale = ContentScale.FillBounds,
-                        )
-                        Text(
-                            text = list[it].categoryType.uppercase(),
-                            color = Color.White,
-                            modifier = Modifier
-                                .align(Alignment.BottomStart)
-                                .background(Color.Transparent)
-                                .padding(vertical = 10.dp, horizontal = 10.dp),
-                            fontSize = 17.sp,
-                            fontWeight = FontWeight.Bold
-                        )
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            Image(
+                                painter = painterResource(id = list[it].imageId),
+                                contentDescription = "genre",
+                                contentScale = ContentScale.FillBounds,
+                            )
+                            Text(
+                                text = list[it].categoryType.uppercase(),
+                                color = Color.White,
+                                modifier = Modifier
+                                    .align(Alignment.BottomStart)
+                                    .background(Color.Transparent)
+                                    .padding(vertical = 10.dp, horizontal = 10.dp),
+                                fontSize = 17.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
                 }
             }
         }
         Categories(
-            category = "On Your Wishlist"
+            categoryTitle = "On Your Wishlist",
+            category = "WishList",
+            showForwardIcon = true,
+            navController = navController
         ) {
             if (homeScreenViewModel.booksFromCart.value.e != null)
                 Text(text = "Something went wrong!!")
@@ -253,7 +268,10 @@ fun HomeContent(
 fun Categories(
     isCategory: Boolean = true,
     category: String = "Explore by Genre",
+    categoryTitle: String,
+    showForwardIcon: Boolean = true,
     cornerRadius: Dp = 10.dp,
+    navController: NavController,
     content: @Composable () -> Unit = {}
 ) {
     Column(
@@ -267,13 +285,17 @@ fun Categories(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(text = category, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-            IconButton(onClick = { /*TODO*/ }) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowForward,
-                    contentDescription = "Go to $category",
-                    tint = AppConstants.DarkYellow
-                )
-            }
+            if (showForwardIcon)
+                IconButton(onClick = {
+
+                    navController.navigate(ReaderScreens.CategoriesScreen.name + "/${category}")
+                }) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowForward,
+                        contentDescription = "Go to $category",
+                        tint = AppConstants.DarkYellow
+                    )
+                }
         }
         Box(modifier = Modifier.clip(RoundedCornerShape(corner = CornerSize(cornerRadius)))) {
             content()
@@ -303,7 +325,7 @@ fun SearchResults(
                 val list = searchViewModel.searchResult
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(1),
-                    contentPadding = PaddingValues(vertical = 15.dp, horizontal = 15.dp),
+                    contentPadding = PaddingValues(15.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {

@@ -11,6 +11,8 @@ import androidx.navigation.navArgument
 import com.example.jetreader.components.InputViewModel
 import com.example.jetreader.screens.book.BookDetailScreen
 import com.example.jetreader.screens.book.BookDetailsViewModel
+import com.example.jetreader.screens.categories.CategoriesScreen
+import com.example.jetreader.screens.categories.CategoriesViewModel
 import com.example.jetreader.screens.home.HomeScreen
 import com.example.jetreader.screens.home.HomeScreenViewModel
 import com.example.jetreader.screens.home.SearchViewModel
@@ -28,6 +30,7 @@ fun ReaderNavigation() {
     val homeScreenViewModel = hiltViewModel<HomeScreenViewModel>()
     val bookDetailsViewModel = hiltViewModel<BookDetailsViewModel>()
     val loginViewModel = hiltViewModel<LoginViewModel>()
+    val categoriesViewModel = hiltViewModel<CategoriesViewModel>()
     NavHost(
         navController = navController,
         startDestination = ReaderScreens.SplashScreen.name
@@ -67,6 +70,17 @@ fun ReaderNavigation() {
                 bookId = bookId,
                 fireStoreId = fireStoreId,
                 bookDetailsViewModel = bookDetailsViewModel
+            )
+        }
+        composable(
+            route = ReaderScreens.CategoriesScreen.name + "/{data_type}",
+            arguments = listOf(navArgument("data_type") { type = NavType.StringType })
+        ) { navBackStackEntry ->
+            CategoriesScreen(
+                dataType = navBackStackEntry.arguments!!.getString("data_type")!!,
+                homeScreenViewModel = homeScreenViewModel,
+                categoriesViewModel = categoriesViewModel,
+                navController = navController
             )
         }
     }
