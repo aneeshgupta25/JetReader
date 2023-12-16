@@ -44,6 +44,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.jetreader.R
 import com.example.jetreader.components.CustomButton
+import com.example.jetreader.data.PagerData
 import com.example.jetreader.navigation.ReaderScreens
 import com.example.jetreader.utils.AppConstants
 import kotlinx.coroutines.delay
@@ -83,12 +84,13 @@ fun OnboardPager() {
     val pagerState = rememberPagerState(
         initialPage = 0,
         initialPageOffsetFraction = 0f
-    ) { 4 }
+    ) { PagerData.getPagerData().size }
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(0.8f)
     ) {
+        val list = PagerData.getPagerData()
         HorizontalPager(
             modifier = Modifier.fillMaxHeight(0.9f),
             state = pagerState,
@@ -115,7 +117,7 @@ fun OnboardPager() {
                             .fillMaxHeight(0.65f)
                     ) {
                         Image(
-                            painter = painterResource(id = R.drawable.book1),
+                            painter = painterResource(id = list[it].img),
                             contentDescription = null,
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -124,29 +126,15 @@ fun OnboardPager() {
                         )
                     }
                     Text(
-                        text = buildAnnotatedString {
-                            withStyle(
-                                style = SpanStyle(
-                                    color = Color.Black,
-                                )
-                            ) {
-                                append("Welcome to")
-                            }
-                            withStyle(
-                                style = SpanStyle(
-                                    color = AppConstants.DarkYellow
-                                )
-                            ) {
-                                append(" JetReader \uD83D\uDC4B")
-                            }
-                        },
+                        text = list[it].title,
                         modifier = Modifier.fillMaxWidth(),
                         fontWeight = FontWeight.Bold,
                         fontSize = 27.sp,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        lineHeight = 30.sp,
                     )
                     Text(
-                        text = "Soar into a World of Words, " + "where each page carries you to new heights of imagination and " + "discovery.",
+                        text = list[it].description,
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 20.dp),
                         textAlign = TextAlign.Center,
                         lineHeight = 25.sp,
@@ -158,7 +146,7 @@ fun OnboardPager() {
         LaunchedEffect(true) {
             while(true) {
                 delay(3000)
-                pagerState.animateScrollToPage((pagerState.settledPage+1)%4)
+                pagerState.animateScrollToPage((pagerState.settledPage+1)%list.size)
             }
         }
         Row(
@@ -166,7 +154,7 @@ fun OnboardPager() {
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            repeat(4) {
+            repeat(list.size) {
                 val color =
                     if (pagerState.currentPage == it) AppConstants.DarkYellow else Color.Gray
                 Box(
