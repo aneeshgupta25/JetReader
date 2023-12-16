@@ -56,8 +56,7 @@ fun SplashScreen(
                     }
                 )
             )
-//            delay(2000)
-            //TODO: uncomment delay(2000)
+            delay(2000)
             if(FirebaseAuth.getInstance().currentUser?.email.isNullOrEmpty()) {
                 navController.navigate(ReaderScreens.OnBoardScreen.name) {
                     popUpTo(ReaderScreens.SplashScreen.name) {
