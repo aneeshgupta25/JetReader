@@ -43,6 +43,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.text.HtmlCompat
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.jetreader.R
@@ -57,19 +58,20 @@ import com.example.jetreader.utils.AppConstants
 fun BookDetailScreen(
     bookId: String,
     bookDetailsViewModel: BookDetailsViewModel,
+    navController: NavController,
     fireStoreId: String? = null
 ) {
+    LaunchedEffect(true) {
+        bookDetailsViewModel.getBookDetails(bookId)
+    }
+
+    var bookData = bookDetailsViewModel.bookDetails
     Scaffold(
         topBar = {
-            CustomTopBar()
+            CustomTopBar(bookData?.volumeInfo?.title ?: "", navController)
         }
     ) {
 
-        LaunchedEffect(true) {
-            bookDetailsViewModel.getBookDetails(bookId)
-        }
-
-        var bookData = bookDetailsViewModel.bookDetails
         Box(modifier = Modifier.padding(it)) {
             if (bookDetailsViewModel.loading || bookData == null)
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

@@ -1,5 +1,6 @@
 package com.example.jetreader.screens.home
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -29,12 +30,8 @@ class HomeScreenViewModel @Inject constructor(
         viewModelScope.launch {
             booksFromCart.value.loading = true
             booksFromCart.value = fireStoreRepository.getAllBooksFromFireStore()
-            if(!booksFromCart.value.data.isNullOrEmpty()) {
-                booksFromCart.value.data = booksFromCart.value.data!!.filter {
-                    it.userId == FirebaseAuth.getInstance().currentUser?.uid.toString()
-                }
+            if(booksFromCart.value.data != null)
                 booksFromCart.value.loading = false
-            }
         }
     }
 

@@ -56,6 +56,7 @@ import com.example.jetreader.data.GenreData
 import com.example.jetreader.model.volume.Book
 import com.example.jetreader.navigation.ReaderScreens
 import com.example.jetreader.utils.AppConstants
+import com.google.firebase.auth.FirebaseAuth
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -66,6 +67,7 @@ fun HomeScreen(
     homeScreenViewModel: HomeScreenViewModel,
     navController: NavController
 ) {
+//    homeScreenViewModel.getBooksFromCart()
     Scaffold(topBar = {
         Crossfade(targetState = searchViewModel.searchBarVisible, label = "Home topbar") {
             if (!it) HomeTopBar(searchViewModel)
@@ -232,12 +234,17 @@ fun HomeContent(
             showForwardIcon = true,
             navController = navController
         ) {
+            var list = homeScreenViewModel.booksFromCart.value.data!!.filter {
+                it.userId == FirebaseAuth.getInstance().currentUser?.uid
+            }
             if (homeScreenViewModel.booksFromCart.value.e != null)
                 Text(text = "Something went wrong!!")
-            else if (homeScreenViewModel.booksFromCart.value.data.isNullOrEmpty())
+            else if (list == null)
                 ProgressBar()
+            else if (list.isEmpty()) 
+                Text(text = "No Books in Cart \uD83D\uDE42")
             else {
-                var list = homeScreenViewModel.booksFromCart.value.data
+                
                 LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {

@@ -68,7 +68,7 @@ fun CategoriesContent(
     navController: NavController,
 ) {
     Scaffold(
-        topBar = { CustomTopBar(dataType) }
+        topBar = { CustomTopBar(dataType, navController) }
     ) {
         Box(
             modifier = Modifier
@@ -90,10 +90,15 @@ fun LoadList(
     when (dataType) {
         "WishList" -> {
             val list = homeScreenViewModel.booksFromCart.value.data
-            if (list.isNullOrEmpty())
+            if (list == null)
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     ProgressBar()
                 }
+            else if (list.isEmpty()) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(text = "No Books in Cart \uD83D\uDE42", fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+                }
+            }
             else
                 LazyColumn(
                     contentPadding = PaddingValues(10.dp),

@@ -20,6 +20,7 @@ import com.example.jetreader.screens.login.LoginScreen
 import com.example.jetreader.screens.login.LoginViewModel
 import com.example.jetreader.screens.onboard.OnboardScreen
 import com.example.jetreader.screens.register.RegisterScreen
+import com.example.jetreader.screens.register.RegisterViewModel
 import com.example.jetreader.screens.splash.SplashScreen
 
 @Composable
@@ -31,6 +32,7 @@ fun ReaderNavigation() {
     val bookDetailsViewModel = hiltViewModel<BookDetailsViewModel>()
     val loginViewModel = hiltViewModel<LoginViewModel>()
     val categoriesViewModel = hiltViewModel<CategoriesViewModel>()
+    val registerViewModel = hiltViewModel<RegisterViewModel>()
     NavHost(
         navController = navController,
         startDestination = ReaderScreens.SplashScreen.name
@@ -42,7 +44,11 @@ fun ReaderNavigation() {
             OnboardScreen(navController = navController)
         }
         composable(route = ReaderScreens.RegisterScreen.name) {
-            RegisterScreen()
+            RegisterScreen(
+                inputViewModel = inputViewModel,
+                registerViewModel = registerViewModel,
+                navController = navController
+            )
         }
         composable(route = ReaderScreens.LoginScreen.name) {
             LoginScreen(
@@ -69,7 +75,8 @@ fun ReaderNavigation() {
             BookDetailScreen(
                 bookId = bookId,
                 fireStoreId = fireStoreId,
-                bookDetailsViewModel = bookDetailsViewModel
+                bookDetailsViewModel = bookDetailsViewModel,
+                navController = navController
             )
         }
         composable(

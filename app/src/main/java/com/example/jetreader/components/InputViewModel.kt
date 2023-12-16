@@ -1,10 +1,8 @@
 package com.example.jetreader.components
 
-import android.util.Log
 import android.util.Patterns
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,19 +29,45 @@ class InputViewModel @Inject constructor() : ViewModel() {
         private set
     var confirmPasswordError by mutableStateOf(false)
         private set
+    var inputFieldEnabled by mutableStateOf(true)
 
-    fun updateUsername(input: String) { username = input }
-    fun updatePassword(input: String) { password = input }
-    fun updateEmail(input: String) { email = input }
-    fun updateConfirmPassword(input: String) { confirmPassword = input }
+    fun updateUsername(input: String) {
+        usernameError = false
+        username = input
+    }
+    fun updatePassword(input: String) {
+        passwordError = false
+        password = input
+    }
+    fun updateEmail(input: String) {
+        emailError = false
+        email = input
+    }
+    fun updateConfirmPassword(input: String) {
+        confirmPasswordError = false
+        confirmPassword = input
+    }
     fun togglePasswordVisible() { passwordVisible = !passwordVisible }
+    fun disableInputField() { inputFieldEnabled = false }
+    fun enableInputField() { inputFieldEnabled = true }
 
-    fun submitRegForm(): Boolean {
-        usernameError = username.trim().isEmpty() || username.trim().length < 6
-        passwordError = password.trim().isEmpty() || password.trim().length < 6
-        confirmPasswordError = confirmPassword.trim().isEmpty() || confirmPassword != password
-        emailError = email.trim().isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email.trim()).matches()
-
-        return !(usernameError || passwordError || confirmPasswordError || emailError)
+    fun checkUserDetails(
+        type: String
+    ): Boolean {
+        when (type) {
+            "login" -> {
+                passwordError = password.trim().isEmpty() || password.trim().length < 6
+                emailError = email.trim().isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email.trim()).matches()
+                return !(emailError || passwordError)
+            }
+            "register" -> {
+                usernameError = username.trim().isEmpty() || username.trim().length < 6
+                passwordError = password.trim().isEmpty() || password.trim().length < 6
+                confirmPasswordError = confirmPassword.trim().isEmpty() || confirmPassword != password
+                emailError = email.trim().isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email.trim()).matches()
+                return !(emailError || passwordError || usernameError || confirmPasswordError)
+            }
+        }
+        return true
     }
 }

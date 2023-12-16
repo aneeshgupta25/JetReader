@@ -1,5 +1,6 @@
 package com.example.jetreader.components
 
+import android.provider.CalendarContract.Colors
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,14 +33,24 @@ fun CustomButton(
     shadow: Boolean = false,
     backgroundColor: Color,
     textColor: Color,
+    enabled: Boolean = true,
     onClick: () -> Unit = {}
 ) {
     Button(
         onClick = onClick,
+        enabled = enabled,
         modifier = modifier
             .fillMaxWidth()
-            .height(AppConstants.getScreenHeightInDp().times(0.07f)),
+            .height(
+                AppConstants
+                    .getScreenHeightInDp()
+                    .times(0.07f)
+            ),
         contentPadding = PaddingValues(0.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = backgroundColor,
+            disabledContainerColor = Color(0xfff9c67f)
+        ),
         elevation = ButtonDefaults.buttonElevation(defaultElevation = if (shadow) 10.dp else 0.dp),
     ) {
         Card(
