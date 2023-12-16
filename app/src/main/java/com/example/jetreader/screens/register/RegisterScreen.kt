@@ -1,5 +1,8 @@
 package com.example.jetreader.screens.register
 
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,8 +23,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -35,17 +40,18 @@ import androidx.navigation.NavController
 import com.example.jetreader.components.CustomButton
 import com.example.jetreader.components.CustomTopBar
 import com.example.jetreader.components.InputField
-import com.example.jetreader.components.InputViewModel
+import com.example.jetreader.components.ProgressBar
+import com.example.jetreader.navigation.ReaderScreens
 import com.example.jetreader.utils.AppConstants
 
 @OptIn(ExperimentalMaterial3Api::class)
 //@Preview
 @Composable
 fun RegisterScreen(
-    inputViewModel: InputViewModel,
     registerViewModel: RegisterViewModel,
     navController: NavController
 ) {
+    val context = LocalContext.current
     Scaffold(
         modifier = Modifier.fillMaxSize().padding(horizontal = 5.dp),
         topBar = { CustomTopBar("", navController) }
@@ -70,61 +76,61 @@ fun RegisterScreen(
                         Spacer(modifier = Modifier.height(20.dp))
                         InputField(
                             label = "Username", type = KeyboardType.Text,
-                            value = inputViewModel.username,
-                            onValueChange = { inputViewModel.updateUsername(it) },
+                            value = registerViewModel.username,
+                            onValueChange = { registerViewModel.updateUsername(it) },
                             placeHolderText = "Enter your username",
-                            isError = inputViewModel.usernameError,
+                            isError = registerViewModel.usernameError,
                             errorText = "Username should be at least 6 chars long"
                         )
                         InputField(
                             label = "Email", type = KeyboardType.Email,
-                            value = inputViewModel.email,
-                            onValueChange = { inputViewModel.updateEmail(it) },
+                            value = registerViewModel.email,
+                            onValueChange = { registerViewModel.updateEmail(it) },
                             placeHolderText = "Enter your Email ID",
-                            isError = inputViewModel.emailError,
+                            isError = registerViewModel.emailError,
                             errorText = "Enter a valid email ID"
                         )
                         InputField(
                             label = "Password", type = KeyboardType.Password,
-                            value = inputViewModel.password,
-                            onValueChange = { inputViewModel.updatePassword(it) },
+                            value = registerViewModel.password,
+                            onValueChange = { registerViewModel.updatePassword(it) },
                             placeHolderText = "Enter your password",
-                            isError = inputViewModel.passwordError,
+                            isError = registerViewModel.passwordError,
                             trailingIcon = {
                                 IconButton(
-                                    onClick = { inputViewModel.togglePasswordVisible() }
+                                    onClick = { registerViewModel.togglePasswordVisible() }
                                 ) {
                                     Icon(
-                                        imageVector = if (inputViewModel.passwordVisible)
+                                        imageVector = if (registerViewModel.passwordVisible)
                                             Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
                                         contentDescription = null,
                                         tint = AppConstants.DarkYellow
                                     )
                                 }
                             },
-                            visualTransformation = if (inputViewModel.passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                            visualTransformation = if (registerViewModel.passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                             errorText = "Password must be at least 6 chars long"
                         )
                         InputField(
                             label = "Confirm Password", type = KeyboardType.Password,
-                            value = inputViewModel.confirmPassword,
-                            onValueChange = { inputViewModel.updateConfirmPassword(it) },
+                            value = registerViewModel.confirmPassword,
+                            onValueChange = { registerViewModel.updateConfirmPassword(it) },
                             imeAction = ImeAction.Done,
                             placeHolderText = "Confirm your password",
-                            isError = inputViewModel.confirmPasswordError,
+                            isError = registerViewModel.confirmPasswordError,
                             trailingIcon = {
                                 IconButton(
-                                    onClick = { inputViewModel.togglePasswordVisible() }
+                                    onClick = { registerViewModel.togglePasswordVisible() }
                                 ) {
                                     Icon(
-                                        imageVector = if (inputViewModel.passwordVisible)
+                                        imageVector = if (registerViewModel.passwordVisible)
                                             Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
                                         contentDescription = null,
                                         tint = AppConstants.DarkYellow
                                     )
                                 }
                             },
-                            visualTransformation = if (inputViewModel.passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                            visualTransformation = if (registerViewModel.passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                             errorText = "Password doesn't match"
                         )
                     }
@@ -137,13 +143,43 @@ fun RegisterScreen(
                         text = "Sign Up",
                         shadow = true
                     ) {
-                        if (inputViewModel.checkUserDetails("register")) registerViewModel.createUserWithEmailAndPassword(
-                            email = inputViewModel.email,
-                            password = inputViewModel.password,
-                            username = inputViewModel.username
-                        )
+                        if (registerViewModel.checkUserDetails("register")) {
+                            registerViewModel.disableInputField()
+                            registerViewModel.createUserWithEmailAndPassword(
+                                email = registerViewModel.email,
+                                password = registerViewModel.password,
+                                username = registerViewModel.username,
+                                retry = {
+                                    registerViewModel.enableInputField()
+                                    Toast.makeText(
+                                        context,
+                                        "Something went wrong! Please try again..",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            ) {
+                                navController.navigate(ReaderScreens.HomeScreen.name) {
+                                    popUpTo(ReaderScreens.OnBoardScreen.name) {
+                                        inclusive = true
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
+            }
+            if (registerViewModel.loading)
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Transparent),
+                    contentAlignment = Alignment.Center
+                ) {
+                    ProgressBar()
+                }
+            BackHandler(
+                enabled = !registerViewModel.inputFieldEnabled
+            ) { // Don't let user go back
             }
         }
     }

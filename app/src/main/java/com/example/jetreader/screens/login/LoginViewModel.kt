@@ -1,6 +1,7 @@
 package com.example.jetreader.screens.login
 
 import android.util.Log
+import android.util.Patterns
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -19,6 +20,28 @@ class LoginViewModel : ViewModel() {
     var loading: Boolean by mutableStateOf(false)
     private var auth: FirebaseAuth = Firebase.auth
 
+    var password by mutableStateOf("")
+        private set
+    var email by mutableStateOf("")
+        private set
+    var passwordVisible by mutableStateOf(false)
+        private set
+    var passwordError by mutableStateOf(false)
+        private set
+    var emailError by mutableStateOf(false)
+        private set
+    var inputFieldEnabled by mutableStateOf(true)
+    fun updatePassword(input: String) {
+        passwordError = false
+        password = input
+    }
+    fun updateEmail(input: String) {
+        emailError = false
+        email = input
+    }
+    fun togglePasswordVisible() { passwordVisible = !passwordVisible }
+    fun disableInputField() { inputFieldEnabled = false }
+    fun enableInputField() { inputFieldEnabled = true }
 
 
     fun signInWithEmailAndPassword(
@@ -48,5 +71,13 @@ class LoginViewModel : ViewModel() {
         } catch (exception: Exception) {
             Log.d("FB AUTH", "signInWithEmailAndPassword: $exception")
         }
+    }
+
+    fun checkUserDetails(
+        type: String
+    ): Boolean {
+        passwordError = password.trim().isEmpty() || password.trim().length < 6
+        emailError = email.trim().isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email.trim()).matches()
+        return !(emailError || passwordError)
     }
 }

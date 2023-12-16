@@ -42,6 +42,7 @@ import com.example.jetreader.model.volume.Book
 import com.example.jetreader.screens.home.HomeScreenViewModel
 import com.example.jetreader.screens.home.isBookInCart
 import com.example.jetreader.utils.AppConstants
+import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -89,7 +90,9 @@ fun LoadList(
 ) {
     when (dataType) {
         "WishList" -> {
-            val list = homeScreenViewModel.booksFromCart.value.data
+            val list = homeScreenViewModel.booksFromCart.value.data?.filter {
+                it.userId == FirebaseAuth.getInstance().currentUser?.uid
+            }
             if (list == null)
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     ProgressBar()

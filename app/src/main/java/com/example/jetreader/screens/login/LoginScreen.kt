@@ -38,7 +38,6 @@ import androidx.navigation.NavController
 import com.example.jetreader.components.CustomButton
 import com.example.jetreader.components.CustomTopBar
 import com.example.jetreader.components.InputField
-import com.example.jetreader.components.InputViewModel
 import com.example.jetreader.components.ProgressBar
 import com.example.jetreader.navigation.ReaderScreens
 import com.example.jetreader.utils.AppConstants
@@ -47,7 +46,6 @@ import com.example.jetreader.utils.AppConstants
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
-    inputViewModel: InputViewModel,
     loginViewModel: LoginViewModel,
     navController: NavController
 ) {
@@ -83,39 +81,39 @@ fun LoginScreen(
                         Spacer(modifier = Modifier.height(20.dp))
                         InputField(
                             label = "Email", type = KeyboardType.Email,
-                            value = inputViewModel.email,
+                            value = loginViewModel.email,
                             onValueChange = {
-                                inputViewModel.updateEmail(it)
+                                loginViewModel.updateEmail(it)
                             },
                             placeHolderText = "Enter your email ID",
-                            isError = inputViewModel.emailError,
-                            enabled = inputViewModel.inputFieldEnabled,
-                            errorText = if (inputViewModel.email.trim()
+                            isError = loginViewModel.emailError,
+                            enabled = loginViewModel.inputFieldEnabled,
+                            errorText = if (loginViewModel.email.trim()
                                     .isEmpty()
                             ) "Email ID can't be empty" else "Invalid email ID"
                         )
 
                         InputField(
                             label = "Password", type = KeyboardType.Password,
-                            value = inputViewModel.password,
-                            onValueChange = { inputViewModel.updatePassword(it) },
+                            value = loginViewModel.password,
+                            onValueChange = { loginViewModel.updatePassword(it) },
                             placeHolderText = "Enter your password",
-                            isError = inputViewModel.passwordError,
-                            enabled = inputViewModel.inputFieldEnabled,
+                            isError = loginViewModel.passwordError,
+                            enabled = loginViewModel.inputFieldEnabled,
                             trailingIcon = {
                                 IconButton(
-                                    onClick = { inputViewModel.togglePasswordVisible() }
+                                    onClick = { loginViewModel.togglePasswordVisible() }
                                 ) {
                                     Icon(
-                                        imageVector = if (inputViewModel.passwordVisible)
+                                        imageVector = if (loginViewModel.passwordVisible)
                                             Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
                                         contentDescription = null,
                                         tint = AppConstants.DarkYellow
                                     )
                                 }
                             },
-                            visualTransformation = if (inputViewModel.passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                            errorText = if (inputViewModel.password.trim()
+                            visualTransformation = if (loginViewModel.passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                            errorText = if (loginViewModel.password.trim()
                                     .isEmpty()
                             ) "Password can't be empty" else "Password must be at least 6 characters long"
                         )
@@ -129,16 +127,16 @@ fun LoginScreen(
                         backgroundColor = AppConstants.DarkYellow,
                         textColor = Color.White,
                         text = "Sign In",
-                        enabled = inputViewModel.inputFieldEnabled,
+                        enabled = loginViewModel.inputFieldEnabled,
                         shadow = true
                     ) {
-                        if (inputViewModel.checkUserDetails("login")) {
-                            inputViewModel.disableInputField()
+                        if (loginViewModel.checkUserDetails("login")) {
+                            loginViewModel.disableInputField()
                             loginViewModel.signInWithEmailAndPassword(
-                                inputViewModel.email,
-                                inputViewModel.password,
+                                loginViewModel.email,
+                                loginViewModel.password,
                                 retry = {
-                                    inputViewModel.enableInputField()
+                                    loginViewModel.enableInputField()
                                     Toast.makeText(
                                         context,
                                         "Couldn't fetch details. Kindly retry",
@@ -166,7 +164,7 @@ fun LoginScreen(
                     ProgressBar()
                 }
             BackHandler(
-                enabled = !inputViewModel.inputFieldEnabled
+                enabled = !loginViewModel.inputFieldEnabled
             ) { // Don't let user go back
             }
         }
