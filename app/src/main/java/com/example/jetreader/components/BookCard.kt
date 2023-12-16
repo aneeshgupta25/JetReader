@@ -63,14 +63,15 @@ fun BookCard(
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = modifier.background(Color.White)
+            modifier = modifier.background(Color.Transparent)
         ) {
             Card(
                 modifier = Modifier
                     .fillMaxHeight(0.7f)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .background(Color.Transparent),
                 shape = RoundedCornerShape(corner = CornerSize(10.dp)),
-                colors = CardDefaults.cardColors(containerColor = Color.White)
+                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
             ) {
                 var imageUrl =
                     book?.volumeInfo?.imageLinks?.thumbnail?.replace("http://", "https://")
@@ -93,7 +94,7 @@ fun BookCard(
                 modifier = Modifier
                     .fillMaxHeight()
                     .fillMaxWidth()
-                    .background(Color.White),
+                    .background(Color.Transparent),
             ) {
                 Column(
                     modifier = Modifier

@@ -6,12 +6,14 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -39,7 +41,7 @@ fun SplashScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color.White)
+            .background(color = MaterialTheme.colorScheme.surface)
     ) {
         val scale = remember {
             Animatable(0f)
@@ -81,7 +83,7 @@ fun SplashScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.llogo),
+                    painter = painterResource(id = if (isSystemInDarkTheme()) R.drawable.dlogo else R.drawable.llogo),
                     contentDescription = "Light Logo",
                     modifier = Modifier
                         .fillMaxHeight(0.5f)

@@ -5,6 +5,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 
 import androidx.compose.foundation.layout.Box
@@ -27,6 +28,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -57,6 +59,7 @@ import com.example.jetreader.model.volume.Book
 import com.example.jetreader.navigation.ReaderScreens
 import com.example.jetreader.utils.AppConstants
 import com.google.firebase.auth.FirebaseAuth
+import java.io.Reader
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -70,7 +73,7 @@ fun HomeScreen(
 //    homeScreenViewModel.getBooksFromCart()
     Scaffold(topBar = {
         Crossfade(targetState = searchViewModel.searchBarVisible, label = "Home topbar") {
-            if (!it) HomeTopBar(searchViewModel)
+            if (!it) HomeTopBar(searchViewModel, navController)
             else SearchBar(searchViewModel = searchViewModel)
         }
     }) {
@@ -98,6 +101,7 @@ fun HomeScreen(
 @Composable
 fun HomeTopBar(
     searchViewModel: SearchViewModel,
+    navController: NavController
 ) {
     Row(
         modifier = Modifier
@@ -114,20 +118,41 @@ fun HomeTopBar(
         ) {
             Image(
                 modifier = Modifier.fillMaxHeight(0.8f),
-                painter = painterResource(id = R.drawable.llogo),
+                painter = painterResource(id = if(isSystemInDarkTheme()) R.drawable.dlogo else R.drawable.llogo),
                 contentDescription = "logo"
             )
             Text(text = "JetReader", fontSize = 20.sp, fontWeight = FontWeight.Bold)
         }
-        IconButton(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = { searchViewModel.toggleSearchBarVisibility() },
+        Row(
+            modifier = Modifier.width(AppConstants.getScreenWidthInDp().times(0.4f))
         ) {
-            Icon(
-                modifier = Modifier.fillMaxSize(0.6f),
-                painter = painterResource(id = R.drawable.search),
-                contentDescription = "Search",
-            )
+            IconButton(
+                modifier = Modifier.fillMaxWidth(0.5f),
+                onClick = { searchViewModel.toggleSearchBarVisibility() },
+            ) {
+                Icon(
+                    modifier = Modifier.fillMaxSize(0.6f),
+                    painter = painterResource(id = R.drawable.search),
+                    contentDescription = "Search",
+                )
+            }
+            Spacer(modifier = Modifier.width(5.dp))
+            IconButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                          FirebaseAuth.getInstance().signOut()
+                    navController.navigate(ReaderScreens.OnBoardScreen.name) {
+                        popUpTo(ReaderScreens.HomeScreen.name) {
+                            inclusive = true
+                        }
+                    }
+                },
+                ) {
+                Icon(
+                    modifier = Modifier.fillMaxSize(0.6f),
+                    imageVector = Icons.Default.Logout,
+                    contentDescription ="")
+            }
         }
     }
 }

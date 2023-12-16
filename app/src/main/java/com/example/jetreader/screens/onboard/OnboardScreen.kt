@@ -23,6 +23,7 @@ import androidx.compose.foundation.pager.PagerScope
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -56,7 +57,7 @@ fun OnboardScreen(
 ) {
     Column(
         modifier = Modifier
-            .background(color = Color.White)
+            .background(color = MaterialTheme.colorScheme.background)
             .fillMaxSize()
     ) {
         OnboardPager()
@@ -67,11 +68,11 @@ fun OnboardScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            CustomButton(modifier = Modifier.padding(horizontal = 15.dp), backgroundColor = AppConstants.DarkYellow, textColor = Color.White, text = "Get Started", shadow = false) {
+            CustomButton(modifier = Modifier.padding(horizontal = 15.dp), backgroundColor = MaterialTheme.colorScheme.secondary, textColor = MaterialTheme.colorScheme.onSecondary, text = "Get Started", shadow = false) {
                 navController.navigate(ReaderScreens.RegisterScreen.name)
             }
             Spacer(modifier = Modifier.height(20.dp))
-            CustomButton(modifier = Modifier.padding(horizontal = 15.dp), backgroundColor = AppConstants.LightYellow, textColor = AppConstants.DarkYellow, text = "I already have an account", shadow = false) {
+            CustomButton(modifier = Modifier.padding(horizontal = 15.dp), backgroundColor = MaterialTheme.colorScheme.tertiary, textColor = MaterialTheme.colorScheme.onTertiary, text = "I already have an account", shadow = false) {
                 navController.navigate(ReaderScreens.LoginScreen.name)
             }
         }
@@ -81,16 +82,17 @@ fun OnboardScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun OnboardPager() {
+    val list = PagerData.getPagerData()
     val pagerState = rememberPagerState(
         initialPage = 0,
         initialPageOffsetFraction = 0f
-    ) { PagerData.getPagerData().size }
+    ) { list.size }
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(0.8f)
     ) {
-        val list = PagerData.getPagerData()
+
         HorizontalPager(
             modifier = Modifier.fillMaxHeight(0.9f),
             state = pagerState,
@@ -115,6 +117,7 @@ fun OnboardPager() {
                         modifier = Modifier
                             .fillMaxWidth()
                             .fillMaxHeight(0.65f)
+                            .background(Color.Transparent)
                     ) {
                         Image(
                             painter = painterResource(id = list[it].img),
@@ -122,7 +125,7 @@ fun OnboardPager() {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .fillMaxHeight(),
-                            contentScale = ContentScale.FillBounds
+                            contentScale = ContentScale.Crop
                         )
                     }
                     Text(

@@ -31,7 +31,7 @@ class SearchViewModel @Inject constructor(private val readerRepository: ReaderRe
 
     init {
         viewModelScope.launch {
-            defaultList = readerRepository.getVolume("hello").data
+            defaultList = readerRepository.getVolume("comic").data
         }
     }
 
@@ -75,11 +75,5 @@ class SearchViewModel @Inject constructor(private val readerRepository: ReaderRe
         searchResult = readerRepository.getVolume((searchText)).data
         searchLoading = false
         searchingState = false
-//
-//        _searchResultState.value.loading = true
-//        _searchResultState.value.data = null
-//        _searchResultState.value = readerRepository.getVolume(searchText)
-//        _searchResultState.value.loading = false
-//        searchingState = false
     }
 }

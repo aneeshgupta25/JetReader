@@ -42,7 +42,7 @@ fun InputField(
     isError: Boolean = false,
     singleLine: Boolean = true,
     maxLines: Int = 1,
-    textColor: Color = Color.Black,
+    textColor: Color = MaterialTheme.colorScheme.onPrimary,
     type: KeyboardType = KeyboardType.Text,
     imeAction: ImeAction = ImeAction.Next,
     onAction: KeyboardActions = KeyboardActions.Default,
@@ -75,8 +75,8 @@ fun InputField(
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 containerColor = Color.Transparent,
                 textColor = textColor,
-                cursorColor = AppConstants.DarkYellow,
-                focusedBorderColor = AppConstants.DarkYellow,
+                cursorColor = MaterialTheme.colorScheme.secondary,
+                focusedBorderColor = MaterialTheme.colorScheme.secondary,
                 unfocusedBorderColor = Color.Gray
             ),
             trailingIcon = trailingIcon,

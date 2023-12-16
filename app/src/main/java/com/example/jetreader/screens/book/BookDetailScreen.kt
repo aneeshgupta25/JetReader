@@ -103,6 +103,7 @@ fun BookDetails(bookData: Book, fireStoreId: String?, bookDetailsViewModel: Book
         BookHeader(bookData = bookData)
         BookAbout(bookData = bookData)
         CustomButton(
+            modifier = Modifier.padding(bottom = 5.dp, top = 0.dp),
             backgroundColor = if (buttonState) Color.Red else AppConstants.DarkYellow,
             textColor = Color.White,
             text = if (buttonState) "Remove from Cart" else "Add to Cart"

@@ -15,28 +15,31 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import com.example.jetreader.utils.AppConstants
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
-)
-
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40,
-
-
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
+    primary = AppConstants.DarkGray,
+    secondary = AppConstants.DarkYellow,
+    tertiary = AppConstants.MediumGray,
     onPrimary = Color.White,
     onSecondary = Color.White,
     onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
+    surface = AppConstants.DarkGray,
+    error = Color(0xffcf6679)
+)
 
+private val LightColorScheme = lightColorScheme(
+    primary = Color.White,
+    secondary = AppConstants.DarkYellow,
+    tertiary = AppConstants.LightYellow,
+    onPrimary = Color.Black,
+    onSecondary = Color.White,
+    onTertiary = AppConstants.DarkYellow,
+    surface = Color.White,
+    onSurface = Color.Black,
+    background = Color(0xFFFFFBFE),
+    onBackground = Color(0xFF1C1B1F),
 )
 
 @Composable
@@ -58,16 +61,20 @@ fun JetReaderTheme(
     val view = LocalView.current
     if (!view.isInEditMode) {
 
-
+        val systemUiController = rememberSystemUiController()
         SideEffect {
-            val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+            systemUiController.setStatusBarColor(
+                color = if(darkTheme) AppConstants.DarkGray else Color.White,
+                darkIcons = !darkTheme
+            )
+//            val window = (view.context as Activity).window
+//            window.statusBarColor = colorScheme.primary.toArgb()
+//            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
         }
     }
 
     MaterialTheme(
-        colorScheme = colorScheme,
+        colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme,
         typography = Typography,
         content = content
     )
