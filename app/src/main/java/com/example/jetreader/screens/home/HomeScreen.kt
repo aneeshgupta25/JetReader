@@ -89,7 +89,7 @@ fun HomeScreen(
     BackHandler(
         enabled = searchViewModel.searchBarVisible
     ) {
-        searchViewModel.toggleSearchBarVisibility()
+        searchViewModel.hideSearchContents()
     }
 }
 
