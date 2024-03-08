@@ -6,7 +6,7 @@ data class VolumeInfo(
     val authors: List<String>? = null,
     @get:PropertyName("average_rating")
     @set:PropertyName("average_rating")
-    var averageRating: Int? = 3,
+    var averageRating: Double? = 3.5,
 
     val categories: List<String>? = null,
     val description: String? = "",

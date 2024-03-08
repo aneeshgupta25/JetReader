@@ -15,9 +15,11 @@ class ReaderRepository @Inject constructor(private val api: BooksApi) {
         try {
             listOfBooksDataOrException.loading = true
             listOfBooksDataOrException.data = api.getVolumeData(query)?.items
+            Log.d("API ERROR", "getVolume: $listOfBooksDataOrException")
             if(!listOfBooksDataOrException.data.isNullOrEmpty())
                 listOfBooksDataOrException.loading = false
         } catch(exception: Exception) {
+            Log.d("API ERROR", "getVolume: $exception")
             listOfBooksDataOrException.loading = false
             return DataOrException(e = exception)
         }
